@@ -1,3 +1,5 @@
+import { Todo } from "../models/todoSchema.js";
+
 // @desc:  get all todo
 // @route: GET /api/v1/todos
 export const getAllTodo = (req, res) => {
@@ -6,7 +8,20 @@ export const getAllTodo = (req, res) => {
 
 // @desc:  get all todo
 // @route: POST /api/v1/todos
-export const createTodo = (req, res) => {};
+export const createTodo = async (req, res) => {
+  const { title } = req.body;
+  try {
+    const todo = await Todo.create({ title });
+    return res.status(201).json({
+      status: "success",
+      message: "Todo Created",
+      results: todo.length,
+      data: todo,
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 // @desc:  get a todo
 // @route: GET /api/v1/todos/:id
