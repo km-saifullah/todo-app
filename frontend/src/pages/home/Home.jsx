@@ -31,11 +31,16 @@ const Home = () => {
 
   // update
   const handleUpdate = (id) => {
-    
+    // const { id } = todo._id;
   };
 
   // delete
-  const handleDelete = () => {};
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/v1/todos/${id}`);
+      getTodo();
+    } catch (error) {}
+  };
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-center gap-2 py-5">
@@ -55,8 +60,8 @@ const Home = () => {
             <li className="flex items-center gap-x-4" key={item._id}>
               {item.title}
               <div className="flex items-center gap-x-3">
-                <button onClick={() => handleUpdate(id)}>Update</button>
-                <button onClick={() => handleDelete(id)}>Delete</button>
+                <button onClick={() => handleUpdate(todo._id)}>Update</button>
+                <button onClick={() => handleDelete(item._id)}>Delete</button>
               </div>
             </li>
           ))}

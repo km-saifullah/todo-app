@@ -33,8 +33,25 @@ export const getATodo = (req, res) => {};
 
 // @desc:  update a todo
 // @route: PATCH /api/v1/todos/:id
-export const updateTodo = (req, res) => {};
+export const updateTodo = async (req, res) => {
+  try {
+    const todo = await Todo.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    return res
+      .status(200)
+      .json({ status: "success", message: "Todo Updated..!", data: { todo } });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 // @desc:  delete a todo
 // @route: DELETE /api/v1/todos/:id
-export const deleteTodo = (req, res) => {};
+export const deleteTodo = async (req, res) => {
+  try {
+    await Todo.findByIdAndDelete(req.params.id);
+    return res.status(200).json({ status: "Todo deleted" });
+  } catch (error) {}
+};
