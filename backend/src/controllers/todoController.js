@@ -2,8 +2,13 @@ import { Todo } from "../models/todoSchema.js";
 
 // @desc:  get all todo
 // @route: GET /api/v1/todos
-export const getAllTodo = (req, res) => {
-  return res.status(200).json({ status: "success", data: "Hello" });
+export const getAllTodo = async (req, res) => {
+  try {
+    const todos = await Todo.find();
+    return res
+      .status(200)
+      .json({ status: "success", results: todos.length, data: todos });
+  } catch (error) {}
 };
 
 // @desc:  get all todo
@@ -15,7 +20,6 @@ export const createTodo = async (req, res) => {
     return res.status(201).json({
       status: "success",
       message: "Todo Created",
-      results: todo.length,
       data: todo,
     });
   } catch (error) {
