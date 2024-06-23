@@ -12,9 +12,10 @@ const Home = () => {
   const getTodo = async () => {
     try {
       const { data } = await axios.get("http://localhost:8000/api/v1/todos");
-
       setTodo(data.data);
-    } catch (error) {}
+    } catch (error) {
+      console.log("Error fetching todos:", error.message);
+    }
   };
 
   useEffect(() => {
@@ -25,43 +26,62 @@ const Home = () => {
   const handleTodo = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8000/api/v1/todos", { title });
+      const response = await axios.post("http://localhost:8000/api/v1/todos", {
+        title,
+      });
+      console.log("Add todo response:", response);
       getTodo();
+      setTitle("");
     } catch (error) {
-      console.log(error.message);
+      console.error(
+        "Error adding todo:",
+        error.response ? error.response.data : error.message
+      );
     }
-    setTitle("");
   };
 
-  // update todo
-  const handleUpdate = async (id, updateTitle) => {
+  // start update process
+  const handleUpdate = (id, updateTitle) => {
     setTodoId(id);
     setCurrentTitle(updateTitle);
     setIsUpdating(true);
   };
 
+  // finalize update
   const handleUpdateInputField = async (e) => {
     e.preventDefault();
-    const { data } = await axios.get("http://localhost:8000/api/v1/todos");
-    console.log(data);
-    let newData = data.data;
-
-    newData.map(async (item) => {
-      if (todoId === item._id) {
-        console.log(item._id, item.title);
-        await axios.patch(`http://localhost:8000/api/v1/todos/${todoId}`, {
-          title: item.title,
-        });
-      }
-    });
+    try {
+      const response = await axios.patch(
+        `http://localhost:8000/api/v1/todos/${todoId}`,
+        {
+          title: currentTitle,
+        }
+      );
+      getTodo();
+      setIsUpdating(false);
+      setCurrentTitle("");
+      setTodoId("");
+    } catch (error) {
+      console.error(
+        "Error updating todo:",
+        error.response ? error.response.data : error.message
+      );
+    }
   };
 
   // delete todo
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/v1/todos/${id}`);
+      const response = await axios.delete(
+        `http://localhost:8000/api/v1/todos/${id}`
+      );
       getTodo();
-    } catch (error) {}
+    } catch (error) {
+      console.error(
+        "Error deleting todo:",
+        error.response ? error.response.data : error.message
+      );
+    }
   };
 
   return (
@@ -70,8 +90,12 @@ const Home = () => {
         <form className="flex items-center gap-x-4">
           <input
             type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={isUpdating ? currentTitle : title}
+            onChange={(e) => {
+              isUpdating
+                ? setCurrentTitle(e.target.value)
+                : setTitle(e.target.value);
+            }}
             placeholder="Enter Your Todo"
             className="border p-3 rounded text-red-400"
           />
@@ -88,7 +112,7 @@ const Home = () => {
             <li className="w-[50%] flex items-center gap-x-4" key={item._id}>
               {item.title}
               <div className="w-[50%] flex items-center gap-x-3">
-                <button onClick={(e) => handleUpdate(item._id, item.title)}>
+                <button onClick={() => handleUpdate(item._id, item.title)}>
                   Update
                 </button>
                 <button onClick={() => handleDelete(item._id)}>Delete</button>
