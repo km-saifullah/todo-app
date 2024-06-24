@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Image from "../../utils/Image";
+import img from "/favicon.svg";
 
 const Home = () => {
   const [title, setTitle] = useState("");
@@ -92,7 +94,12 @@ const Home = () => {
 
   return (
     <section className="space-y-1">
-      <div className="pt-4 flex items-center justify-center">
+      <div className="pt-4 flex items-center justify-center gap-x-4">
+        <Image
+          className="w-[45px] h-[45px]"
+          imgSrc={img}
+          imgAlt="Image missing"
+        />
         <h1 className="text-[35px] text-[#222] font-mono font-semibold">
           Todo App
         </h1>
