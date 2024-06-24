@@ -26,12 +26,18 @@ const Home = () => {
   const handleTodo = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8000/api/v1/todos", {
-        title,
-      });
-      console.log("Add todo response:", response);
-      getTodo();
-      setTitle("");
+      if (title) {
+        const response = await axios.post(
+          "http://localhost:8000/api/v1/todos",
+          {
+            title,
+          }
+        );
+        getTodo();
+        setTitle("");
+      } else {
+        alert("Please Enter a Todo");
+      }
     } catch (error) {
       console.error(
         "Error adding todo:",
@@ -85,7 +91,12 @@ const Home = () => {
   };
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-1">
+      <div className="pt-4 flex items-center justify-center">
+        <h1 className="text-[35px] text-[#222] font-mono font-semibold">
+          Todo App
+        </h1>
+      </div>
       <div className="flex items-center justify-center gap-2 py-5">
         <form className="flex items-center gap-x-4">
           <input
@@ -97,25 +108,45 @@ const Home = () => {
                 : setTitle(e.target.value);
             }}
             placeholder="Enter Your Todo"
-            className="border p-3 rounded text-red-400"
+            className="border p-3 rounded text-[#181818]"
           />
           {isUpdating ? (
-            <button onClick={handleUpdateInputField}>Update Todo</button>
+            <button
+              className="bg-orange-500 p-3 rounded text-white font-semibold"
+              onClick={handleUpdateInputField}
+            >
+              Update Todo
+            </button>
           ) : (
-            <button onClick={handleTodo}>Add Todo</button>
+            <button
+              className="bg-green-500 p-3 rounded text-white font-semibold"
+              onClick={handleTodo}
+            >
+              Add Todo
+            </button>
           )}
         </form>
       </div>
       <div className="flex items-center justify-center gap-2">
-        <ul className="flex items-center justify-between flex-col-reverse">
+        <ul className="flex items-center justify-between flex-col-reverse gap-y-8">
           {todo.map((item) => (
-            <li className="w-[50%] flex items-center gap-x-4" key={item._id}>
-              {item.title}
-              <div className="w-[50%] flex items-center gap-x-3">
-                <button onClick={() => handleUpdate(item._id, item.title)}>
+            <li className="w-[100%] flex items-center gap-x-8" key={item._id}>
+              <p className="text-[#181818] font-normal text-[18px] w-[80%] capitalize">
+                {item.title}
+              </p>
+              <div className="flex items-center justify-center gap-x-3 w-[20%]">
+                <button
+                  className="bg-orange-500 p-2 rounded text-white font-semibold"
+                  onClick={() => handleUpdate(item._id, item.title)}
+                >
                   Update
                 </button>
-                <button onClick={() => handleDelete(item._id)}>Delete</button>
+                <button
+                  className="bg-red-500 p-2 rounded text-white font-semibold"
+                  onClick={() => handleDelete(item._id)}
+                >
+                  Delete
+                </button>
               </div>
             </li>
           ))}
